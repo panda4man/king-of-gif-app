@@ -11,6 +11,12 @@ export default class SocketManager {
 
     connect(io) {
         this.io = io;
-        this.socket = this.io(`${window.Laravel.socketUrl}:${window.Laravel.socketPort}`);
+        let url = `${window.Laravel.socketUrl}`;
+        
+        if(window.Laravel.socketPort) {
+            url += `:${window.Laravel.socketPort}`;
+        }
+
+        this.socket = this.io(url);
     }
 }

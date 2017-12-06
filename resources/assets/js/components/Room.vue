@@ -1,37 +1,42 @@
 <template>
-	<div class="columns">
-		<div class="column">
-			<div class="card">
-				<div class="card-image" v-if="randomGif">
-					<figure class="image">
-						<img :src="randomGif">
-					</figure>
-				</div>
-				<div class="card-content">
-					<div class="content">
-						Funniest person wins, duh.
+	<div class="columns" v-if="me">
+		<template v-if="me.is_host">
+			<div class="column">
+				<div class="card">
+					<div class="card-image" v-if="randomGif">
+						<figure class="image">
+							<img :src="randomGif">
+						</figure>
+					</div>
+					<div class="card-content">
+						<div class="content">
+							Funniest person wins, duh.
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="column is-one-third">
-			<div class="card">
-				<header class="card-header">
-					<p class="card-header-title">
-						Room Code: {{roomCode}}
-					</p>
-				</header>
-				<div class="card-content">
-					<div class="content">
-						<ul class="player-list">
-							<li v-for="player in gamePlayers" class="player">
-								{{player.username}}
-							</li>
-						</ul>
+			<div class="column is-one-third">
+				<div class="card">
+					<header class="card-header">
+						<p class="card-header-title">
+							Room Code: {{roomCode}}
+						</p>
+					</header>
+					<div class="card-content">
+						<div class="content">
+							<ul class="player-list">
+								<li v-for="player in gamePlayers" class="player">
+									{{player.username}}
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</template>
+		<template v-else>
+
+		</template>
 	</div>
 </template>
 
@@ -56,11 +61,17 @@
 		    this.roomCode = this.$route.params.roomCode;
 
 			/* Tell the server you are on the lobby page */
-			this.socketManager.socket.emit('lobby-joined');
+			this.socketManager.socket.emit('room-joined');
 
 			/* Confirmation when someone joins the lobby from the server */
-			this.socketManager.socket.on('lobby-joined-confirmed', (player) => {
+			this.socketManager.socket.on('room-joined-confirmed', (player) => {
 				this.players.push(player);
+			});
+
+			/* Edge case where upon joining the player isn't found in the player list on the server */
+			this.socketManager.socket.on('room-joined-404', () => {
+			   	swal('Uh oh...', 'We could not find you in the player list.', 'error');
+                this.$router.replace({name: 'landing'});
 			});
 
 			/* A new player joined the lobby */
@@ -108,8 +119,14 @@
 			},
 			me() {
 			  	let p = this.players.filter(p => {
-			  	    return p.
+			  	    return p.socket_id = this.socketManager.socket.id;
 				});
+
+			  	if(p && p.length) {
+			  	    return p[0];
+				}
+
+				return null;
 			}
 		}
 	}

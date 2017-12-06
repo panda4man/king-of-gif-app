@@ -21,6 +21,7 @@
         "sweetalert2": "^7.0.6",
         "vee-validate": "^2.0.0-rc.25",
         "vue": "^2.5.7",
+        "vue-infinite-scroll": "^2.0.2",
         "vue-router": "^3.0.1"
     }
 }

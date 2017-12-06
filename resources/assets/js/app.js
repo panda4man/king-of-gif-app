@@ -1,14 +1,16 @@
 import Vue from 'vue'
 import VeeValidate from 'vee-validate'
+import Axios from 'axios'
+import VueInfiniteScroll from 'vue-infinite-scroll'
+import io from 'socket.io-client'
 import App from './components/App.vue'
 import router from './router'
-import Axios from 'axios'
-import io from 'socket.io-client'
 import SocketManager from './socket-manager'
 import './route-listener'
 
 //Install plugins
 Vue.use(VeeValidate);
+Vue.use(VueInfiniteScroll);
 
 //Axios
 Vue.prototype.$http = Axios;

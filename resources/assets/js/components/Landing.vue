@@ -4,6 +4,7 @@
 			<div class="card">
 				<div class="card-content">
 					<div class="content">
+						<!-- main content -->
 						<div class="columns">
 							<div class="column">
 								<div class="has-text-centered">
@@ -40,6 +41,31 @@
 								</form>
 							</div>
 						</div>
+						<hr>
+						<!-- game progress -->
+						<div class="columns">
+							<div class="column">
+								<h3 class="has-text-centered">Developer Progress</h3>
+								<table class="table is-fullwidth">
+									<thead>
+										<tr>
+											<th>Feature</th>
+											<th>Status</th>
+											<th>Plan</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="feature in featureStatuses">
+											<td>{{feature.name}}</td>
+											<td>
+												<div v-html="feature.status"></div>
+											</td>
+											<td>{{feature.plan}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -48,9 +74,9 @@
 </template>
 
 <script type="text/babel">
+    import GiphyService from '../services/giphy-service'
 	import SocketManager from '../socket-manager'
 	import swal from 'sweetalert2'
-    import GiphyService from '../services/giphy-service'
 
 	export default {
 		name: 'Landing',
@@ -65,11 +91,28 @@
 				},
 				interval: null,
 				randomGif: null,
+				featureStatuses: [
+					{
+					    name: 'Landing Page',
+						status: '<i class="fa fa-check"></i>',
+						plan: 'No further work needed'
+					},
+					{
+					    name: 'Game Lobby',
+						status: '<i class="fa fa-code"></i>',
+						plan: 'This feature is like 90% done. Just need to check a few more edge cases.'
+					},
+					{
+					    name: 'Game Play',
+						status: '<i class="fa fa-lightbulb-o"></i>',
+						plan: 'Still thinking this one through...anyone have any good ideas?'
+					}
+				]
 			}
 		},
         mounted() {
 		    this.getRandomGif();
-            this.interval = setInterval(this.getRandomGif, 8000);
+            this.interval = setInterval(this.getRandomGif, 6500);
         },
         beforeDestroy() {
             clearInterval(this.interval);
@@ -79,12 +122,12 @@
 
 		    /* Successfully joined the room */
 			this.socketManager.socket.on('room-joined', () => {
-				this.$router.push({name: 'lobby', params: {roomCode: this.forms.join.roomCode}});
+				this.$router.push({name: 'room', params: {roomCode: this.forms.join.roomCode}});
 			});
 
 			/* Successfully created the new game */
 			this.socketManager.socket.on('game-created', (roomCode) => {
-				this.$router.push({name: 'lobby', params: {roomCode}});
+				this.$router.push({name: 'room', params: {roomCode}});
 			});
 
 			/* Joining room does not exist */
@@ -116,16 +159,16 @@
 					}
 				});
 			},
-            getRandomGif() {
-                GiphyService.random('', 'pg').then(res => {
-                    let data = res.data.data;
-                    this.randomGif = data.url;
-                }).catch(res => {
-                    if(res.response) {
+			getRandomGif() {
+				GiphyService.random('').then(res => {
+					let data = res.data.data;
+					this.randomGif = data.url;
+				}).catch(res => {
+					if(res.response) {
 
-                    }
-                });
-            }
+					}
+				});
+			}
 		}
 	}
 </script>

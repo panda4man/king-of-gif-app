@@ -50,6 +50,45 @@ class GiphyService
     }
 
     /**
+     * @param string $query
+     * @param string $rating
+     * @param int $limit
+     * @param int $offset
+     * @return array|null
+     */
+    public function search($query = '', $rating = 'g', $limit = 25, $offset = 0)
+    {
+        //Only allow specified ratings
+        if(!in_array($rating, $this->ratings)) {
+            $rating = 'g';
+        }
+
+        $params = [
+            'q'      => $query,
+            'rating' => $rating,
+        ];
+
+        if($limit) {
+            $params['limit'] = $limit;
+        }
+
+        if($offset) {
+            $params['offset'] = $offset;
+        }
+
+        $url = $this->url . 'gifs/search';
+        $res = $this->getRequest($url, $params);
+
+        if($res['success']) {
+            $json = fractal()->collection($res['body']['data'], new GiphyTransformer())->toArray();
+
+            return $json;
+        }
+
+        return null;
+    }
+
+    /**
      * @param string $url
      * @param array $params
      * @return array

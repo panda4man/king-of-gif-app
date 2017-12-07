@@ -1,6 +1,7 @@
 <template>
 	<div class="columns" v-if="me">
 		<template v-if="me.is_host">
+			{{me}}
 			<div class="column">
 				<div class="card">
 					<div class="card-image" v-if="randomGif">
@@ -35,7 +36,20 @@
 			</div>
 		</template>
 		<template v-else>
-
+			<div class="column">
+				<article class="message is-primary">
+					<div class="message-header">
+						<p>Waiting for Players</p>
+					</div>
+					<div class="message-body">
+						<p>Please enjoy these random GIFs while you wait!</p>
+						<button v-if="isFirstPlayer" class="button is-info is-fullwidth start-game" @click="startGame">Start</button>
+						<div class="has-text-centered">
+							<img :src="randomGif" class="player-random-gif" v-if="randomGif">
+						</div>
+					</div>
+				</article>
+			</div>
 		</template>
 	</div>
 </template>
@@ -61,11 +75,12 @@
 		    this.roomCode = this.$route.params.roomCode;
 
 			/* Tell the server you are on the lobby page */
-			this.socketManager.socket.emit('room-joined');
+			this.socketManager.socket.emit('room-joined', this.roomCode);
 
 			/* Confirmation when someone joins the lobby from the server */
-			this.socketManager.socket.on('room-joined-confirmed', (player) => {
-				this.players.push(player);
+			this.socketManager.socket.on('room-joined-confirmed', (players) => {
+			    this.players = [];
+				this.players = players;
 			});
 
 			/* Edge case where upon joining the player isn't found in the player list on the server */
@@ -75,15 +90,15 @@
 			});
 
 			/* A new player joined the lobby */
-			this.socketManager.socket.on('player-joined', (player) => {
-				this.players.push(player)
+			this.socketManager.socket.on('player-joined', (players) => {
+			    this.players = [];
+				this.players = players || [];
 			});
 
 			/* A player left the lobby */
-			this.socketManager.socket.on('player-left', (player) => {
-				this.players = this.players.filter((p) => {
-					return p.id !== player.id
-				});
+			this.socketManager.socket.on('player-left', (players) => {
+			    this.players = [];
+				this.players = players || [];
 			});
 
 			/* Host left so get out */
@@ -109,7 +124,10 @@
 
                     }
                 });
-            }
+            },
+			startGame() {
+				this.socketManager.emit('game-start');
+			}
 		},
 		computed: {
 			gamePlayers() {
@@ -127,7 +145,28 @@
 				}
 
 				return null;
+			},
+			isFirstPlayer() {
+			    let isFirst = false;
+
+			    if(this.players.length) {
+			        if(this.players[0].socket_id = this.socketManager.socket.id) {
+			            isFirst = true;
+					}
+				}
+
+			    return isFirst;
 			}
 		}
 	}
 </script>
+
+<style>
+	.player-random-gif {
+		margin-top: 20px;
+	}
+
+	.start-game {
+		margin-top: 10px;
+	}
+</style>

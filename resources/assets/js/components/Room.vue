@@ -1,7 +1,6 @@
 <template>
 	<div class="columns" v-if="me">
 		<template v-if="me.is_host">
-			{{me}}
 			<div class="column">
 				<div class="card">
 					<div class="card-image" v-if="randomGif">
@@ -79,7 +78,6 @@
 
 			/* Confirmation when someone joins the lobby from the server */
 			this.socketManager.socket.on('room-joined-confirmed', (players) => {
-			    this.players = [];
 				this.players = players;
 			});
 
@@ -91,13 +89,11 @@
 
 			/* A new player joined the lobby */
 			this.socketManager.socket.on('player-joined', (players) => {
-			    this.players = [];
 				this.players = players || [];
 			});
 
 			/* A player left the lobby */
 			this.socketManager.socket.on('player-left', (players) => {
-			    this.players = [];
 				this.players = players || [];
 			});
 
@@ -137,7 +133,7 @@
 			},
 			me() {
 			  	let p = this.players.filter(p => {
-			  	    return p.socket_id = this.socketManager.socket.id;
+			  	    return p.socket_id === this.socketManager.socket.id;
 				});
 
 			  	if(p && p.length) {
@@ -149,8 +145,8 @@
 			isFirstPlayer() {
 			    let isFirst = false;
 
-			    if(this.players.length) {
-			        if(this.players[0].socket_id = this.socketManager.socket.id) {
+			    if(this.gamePlayers.length) {
+			        if(this.gamePlayers[0].socket_id === this.socketManager.socket.id) {
 			            isFirst = true;
 					}
 				}

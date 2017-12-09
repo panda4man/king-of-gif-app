@@ -11,14 +11,15 @@
 
     <script>
         window.Laravel = <?php echo json_encode([
+            'siteName'   => config('app.name'),
             'socketPort' => env('SOCKET_PORT', '4240'),
-            'socketUrl' => env('SOCKET_URL')
+            'socketUrl'  => env('SOCKET_URL')
         ]); ?>
     </script>
 </head>
 <body>
-    @yield('content')
+@yield('content')
 
-    <script src="{{mix('js/app.js')}}"></script>
+<script src="{{mix('js/app.js')}}"></script>
 </body>
 </html>

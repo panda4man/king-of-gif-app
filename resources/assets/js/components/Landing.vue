@@ -2,6 +2,9 @@
 	<div class="columns is-centered">
 		<div class="column is-two-thirds-desktop">
 			<div class="card">
+				<header class="card-header">
+					<p class="card-header-title">Welcome to {{siteName}}</p>
+				</header>
 				<div class="card-content">
 					<div class="content">
 						<!-- main content -->

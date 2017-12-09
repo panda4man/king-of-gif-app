@@ -1,5 +1,6 @@
 <template>
 	<div class="columns" v-if="me">
+		<!-- host only -->
 		<template v-if="me.is_host">
 			<div class="column">
 				<div class="card">
@@ -24,16 +25,20 @@
 					</header>
 					<div class="card-content">
 						<div class="content">
-							<ul class="player-list">
+							<ul class="player-list" v-if="gamePlayers && gamePlayers.length">
 								<li v-for="player in gamePlayers" class="player">
 									{{player.username}}
 								</li>
 							</ul>
+							<div class="notification is-primary" v-else>
+								No players have joined yet. Sit tight and we'll get the show on the road soon!
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</template>
+		<!-- awaiting room players -->
 		<template v-else>
 			<div class="column">
 				<article class="message is-primary">
@@ -102,6 +107,11 @@
 			    swal('Host Left', 'Looks like the host abandoned you...', 'error');
 			   	this.$router.replace({name: 'landing'});
 			});
+
+			/* The game is beginning */
+			this.socketManager.socket.on('game-starting', () => {
+			   	this.$router.push({name: 'roundOne'});
+			});
 		},
         mounted() {
             this.getRandomGif();
@@ -122,7 +132,7 @@
                 });
             },
 			startGame() {
-				this.socketManager.emit('game-start');
+				this.socketManager.socket.emit('game-start', this.roomCode);
 			}
 		},
 		computed: {

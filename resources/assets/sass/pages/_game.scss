@@ -1,0 +1,34 @@
+.gif-results {
+  .gif-item {
+    .wrapper {
+      position: relative;
+
+      &.selected {
+        .overlay {
+          opacity: 1;
+          background-color: rgba(0, 0, 0, 0.3);
+        }
+      }
+
+      .overlay {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 99;
+
+        i {
+          font-size: 80px;
+          color: white;
+        }
+      }
+    }
+  }
+}

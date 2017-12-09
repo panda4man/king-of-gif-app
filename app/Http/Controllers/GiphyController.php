@@ -29,8 +29,8 @@ class GiphyController extends Controller
     {
         $giphs = $service->search(request()->get('q'), request()->get('rating'), request()->get('limit'), request()->get('offset'));
 
-        if($giphs) {
-            return response()->json(['success' => false, 'data' => $giphs]);
+        if(!is_null($giphs)) {
+            return response()->json(['success' => true, 'data' => $giphs]);
         }
 
         return response()->json(['success' => false], 400);

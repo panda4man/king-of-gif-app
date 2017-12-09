@@ -7,10 +7,14 @@ import App from './components/App.vue'
 import router from './router'
 import SocketManager from './socket-manager'
 import './route-listener'
+import GlobalMixin from './mixins/globals'
 
 //Install plugins
 Vue.use(VeeValidate);
 Vue.use(VueInfiniteScroll);
+
+//Install global mixins
+Vue.mixin(GlobalMixin);
 
 //Axios
 Vue.prototype.$http = Axios;

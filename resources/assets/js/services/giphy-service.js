@@ -21,15 +21,15 @@ export default class GiphyService {
     /**
      * Run a search against the giphy api.
      *
-     * @param query
+     * @param q
      * @param rating
      * @param limit
      * @param offset
      */
-    static search(query = '', rating = 'pg', limit = null,  offset = null) {
+    static search(q = '', rating = 'pg', limit = null,  offset = null) {
         let url = '/giphy/search';
         let params = {
-            query,
+            q,
             rating,
             limit,
             offset

@@ -65,10 +65,12 @@
 
 <script type="text/babel">
     import GiphyService from '../../services/giphy-service'
+    import SocketManager from '../../socket-manager'
     import swal from 'sweetalert2'
     import debounce from 'v-debounce'
 
     export default {
+        socketManager: null,
         directives: {debounce},
         data() {
             return {
@@ -89,7 +91,8 @@
                         page: 0,
                         rating: 'pg'
                     }
-                }
+                },
+                player: null
             }
         },
         watch: {
@@ -103,6 +106,23 @@
                     this.lastResultCount = null;
                 }
             }
+        },
+        created() {
+            this.socketManager = new SocketManager();
+
+            /* Get the player for this game id */
+            this.socketManager.socket.emit('player-get', this.$route.params.gameId);
+
+            /* Received self from the server */
+            this.socketManager.socket.on('player-got', (player) => {
+                this.player = player;
+            });
+
+            /* Could not find the player */
+            this.socketManager.socket.on('player-got-404', () => {
+                swal('Uh oh', 'We could not find you in the player list', 'error');
+                this.$router.replace('landing');
+            });
         },
         methods: {
             searchGifs(clearResults = false) {

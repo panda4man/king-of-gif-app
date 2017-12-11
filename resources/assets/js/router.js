@@ -20,7 +20,7 @@ export default new Router({
             component: Room
         },
         {
-            path: '/game',
+            path: '/game/:gameId',
             name: 'game',
             component: Game,
             children: [

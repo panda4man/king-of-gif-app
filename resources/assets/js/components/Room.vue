@@ -109,8 +109,8 @@
 			});
 
 			/* The game is beginning */
-			this.socketManager.socket.on('game-starting', () => {
-			   	this.$router.push({name: 'roundOne'});
+			this.socketManager.socket.on('game-starting', (data) => {
+			   	this.$router.push({name: 'game', params: {gameId: data.gameId}});
 			});
 		},
         mounted() {
